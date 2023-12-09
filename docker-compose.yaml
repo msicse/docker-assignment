@@ -1,0 +1,65 @@
+version: "3.8"
+services:
+  sumoncse_backend:
+    container_name: sumoncse_backend
+    build:
+      context: ./backend
+      dockerfile: ./docker/php/Dockerfile
+    expose:
+      - 9000
+    volumes:
+      - ./backend:/usr/src/app
+      - ./backend/public:/usr/src/app/public
+    depends_on:
+      - sumoncse_db
+    networks:
+      - app_network
+
+  sumoncse_nginx:
+    container_name: sumoncse_nginx
+    build:
+      context: ./backend
+      dockerfile: ./docker/nginx/Dockerfile
+    volumes:
+    - ./backend/public:/usr/src/app/public
+    ports:
+      - 8008:80
+    depends_on:
+      - sumoncse_backend
+    environment:
+      NGINX_FPM_HOST: sumoncse_backend
+      NGINX_ROOT: /usr/src/app/public
+    networks:
+      - app_network
+
+  sumoncse_db:
+    container_name: sumoncse_db
+    image: mysql:8.0.20
+    restart: always
+    volumes:
+      - ./backend/storage/db-data:/var/lib/mysql
+    ports:
+      - 3390:3306
+    environment:
+      MYSQL_DATABASE: blog
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+    networks:
+      - app_network
+
+  sumoncse_frontend:
+    container_name: sumoncse_frontend
+    image: sumoncse_react
+    ports:
+      - "3003:3000"
+    volumes:
+      - ./frontend/src:/app/src
+    networks:
+      - app_network
+    environment:
+      - VITE_API_BASE_URL=http://localhost:8008
+
+networks:
+  app_network:
+    driver: bridge
