@@ -41,16 +41,16 @@ services:
     ports:
       - 3390:3306
     environment:
-      MYSQL_DATABASE: blog
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_USER: root
-      MYSQL_PASSWORD: root
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
     networks:
       - app_network
 
   sumoncse_frontend:
     container_name: sumoncse_frontend
-    image: sumoncse_react
+    image: sumoncse/sumoncse-frontend-react
     ports:
       - "3003:3000"
     volumes:
