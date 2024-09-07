@@ -39,12 +39,12 @@ services:
     volumes:
       - ./backend/storage/db-data:/var/lib/mysql
     ports:
-      - 3390:3306
+      - 3306:3306
     environment:
-      MYSQL_DATABASE: ${DB_DATABASE}
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-      MYSQL_USER: ${DB_USER}
-      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: blog
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
     networks:
       - app_network
 
@@ -59,6 +59,19 @@ services:
       - app_network
     environment:
       - VITE_API_BASE_URL=http://localhost:8008
+
+  phpmyadmin:
+    container_name: phpmyadmin
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - "3400:80"
+    environment:
+        - PMA_HOST=sumoncse_db
+    depends_on:
+      - sumoncse_db
+    networks:
+      - app_network
+
 
 networks:
   app_network:
